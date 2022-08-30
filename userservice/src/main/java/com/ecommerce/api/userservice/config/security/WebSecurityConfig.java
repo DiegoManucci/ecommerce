@@ -2,6 +2,8 @@ package com.ecommerce.api.userservice.config.security;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
@@ -14,11 +16,12 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 @EnableGlobalMethodSecurity(prePostEnabled = true)
 public class WebSecurityConfig {
 
+    private final AuthenticationConfiguration authenticationConfiguration;
     private final AuthenticationEntryPointImpl authenticationEntryPoint;
-
     private final AuthenticationFilter authenticationFilter;
 
-    public WebSecurityConfig(AuthenticationEntryPointImpl authenticationEntryPoint, AuthenticationFilter authenticationFilter) {
+    public WebSecurityConfig(AuthenticationConfiguration authenticationConfiguration, AuthenticationEntryPointImpl authenticationEntryPoint, AuthenticationFilter authenticationFilter) {
+        this.authenticationConfiguration = authenticationConfiguration;
         this.authenticationEntryPoint = authenticationEntryPoint;
         this.authenticationFilter = authenticationFilter;
     }
@@ -29,7 +32,7 @@ public class WebSecurityConfig {
                 .httpBasic()
                 .and()
                 .authorizeHttpRequests()
-                .antMatchers("/user/*").permitAll()
+                .antMatchers("/auth/*").permitAll()
                 .anyRequest().authenticated()
                 .and()
                 .csrf().disable()
@@ -46,4 +49,10 @@ public class WebSecurityConfig {
     public PasswordEncoder passwordEncoder(){
         return new BCryptPasswordEncoder();
     }
+
+    @Bean
+    public AuthenticationManager authenticationManager() throws Exception {
+        return authenticationConfiguration.getAuthenticationManager();
+    }
+
 }

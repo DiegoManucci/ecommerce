@@ -21,13 +21,9 @@ public class UserDetailsServiceImpl implements UserDetailsService { // Spring Se
     @Override
     @Transactional
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        return null;
-    }
-
-    @Transactional
-    public UserModel loadUserByEmail(String email) throws Exception {
+        String email = username;
         UserModel userModel = userRepository.findByEmail(email)
-                .orElseThrow(() -> new Exception("User Not Found With Email: " + email));
+                .orElseThrow(() -> new UsernameNotFoundException("User Not Found With Email: " + email));
 
         return new UserModel(userModel.getEmail(), userModel.getUsername(), userModel.getPassword(), userModel.getRoles(), true, true, true, true);
     }

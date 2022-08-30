@@ -23,6 +23,7 @@ public class JwtTokenUtil {
         return Jwts.builder()
                 .setClaims(claims)
                 .setSubject(subject)
+                .setSubject("oi")
                 .setIssuedAt(new Date(System.currentTimeMillis()))
                 .setExpiration(new Date(System.currentTimeMillis() + Integer.parseInt(validity)))
                 .signWith(SignatureAlgorithm.HS256, secret)
