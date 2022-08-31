@@ -1,10 +1,12 @@
 package com.ecommerce.api.userservice.controllers;
 
+import com.ecommerce.api.userservice.config.security.EmailPasswordAuthenticationToken;
 import com.ecommerce.api.userservice.config.security.utils.JwtTokenUtil;
 import com.ecommerce.api.userservice.dtos.UserDto;
 import com.ecommerce.api.userservice.models.UserModel;
 import com.ecommerce.api.userservice.services.UserDetailsServiceImpl;
 import com.ecommerce.api.userservice.services.UserService;
+import io.jsonwebtoken.ExpiredJwtException;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -22,7 +24,6 @@ import java.util.HashMap;
 public class AuthenticationController {
 
     private final UserDetailsServiceImpl userDetailsService;
-
     private final AuthenticationManager authenticationManager;
     private final UserService userService;
     private final JwtTokenUtil jwtTokenUtil;
@@ -47,11 +48,11 @@ public class AuthenticationController {
 
         UserModel userModel = new UserModel();
         BeanUtils.copyProperties(userDto, userModel);
-        try {
-            authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(userModel.getEmail(), userModel.getPassword()));
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+
+        if()
+
+        authenticationManager.authenticate(new EmailPasswordAuthenticationToken(userModel.getEmail(), userModel.getPassword()));
+
         UserDetails userDetails = userDetailsService.loadUserByUsername(userDto.getEmail());
 
         String jwtToken = jwtTokenUtil.generateToken(new HashMap<>(), userDetails.getUsername());
