@@ -1,5 +1,6 @@
 package com.ecommerce.api.userservice.controllers;
 
+import com.ecommerce.api.userservice.config.security.EmailPasswordAuthenticationToken;
 import com.ecommerce.api.userservice.config.security.utils.JwtTokenUtil;
 import com.ecommerce.api.userservice.dtos.UserDto;
 import com.ecommerce.api.userservice.models.UserModel;
@@ -11,6 +12,7 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PostAuthorize;
 import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
@@ -50,7 +52,7 @@ public class AuthenticationController {
         BeanUtils.copyProperties(userDto, userModel);
 
         // if not authorized will throw exception and stop here
-        authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(userModel.getEmail(), userModel.getPassword()));
+        authenticationManager.authenticate(new EmailPasswordAuthenticationToken(userModel.getEmail(), userModel.getPassword(), Boolean.FALSE));
 
         UserDetails userDetails = userDetailsService.loadUserByUsername(userDto.getEmail());
 

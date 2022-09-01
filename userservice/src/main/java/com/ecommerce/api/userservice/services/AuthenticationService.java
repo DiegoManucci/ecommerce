@@ -29,4 +29,12 @@ public class AuthenticationService implements UserDetailsService { // Spring Sec
 
         return new UserModel(userModel.getEmail(), userModel.getUsername(), userModel.getPassword(), userModel.getRoles(), true, true, true, true);
     }
+
+    @Transactional
+    public UserModel loadUserByEmail(String email) throws UsernameNotFoundException { // loadUserByEmail
+        UserModel userModel = userRepository.findByEmail(email)
+                .orElseThrow(() -> new UsernameNotFoundException("User Not Found With Email: " + email)); // create EmailNotFoundException ?
+
+        return new UserModel(userModel.getEmail(), userModel.getUsername(), userModel.getPassword(), userModel.getRoles(), true, true, true, true);
+    }
 }
