@@ -1,6 +1,7 @@
 package com.ecommerce.api.userservice.handlers;
 
 import com.ecommerce.api.userservice.controllers.AuthenticationController;
+import com.ecommerce.api.userservice.exceptions.EmailNotFoundException;
 import com.ecommerce.api.userservice.exceptions.InvalidPasswordException;
 import io.jsonwebtoken.ExpiredJwtException;
 import org.springframework.http.HttpStatus;
@@ -47,6 +48,12 @@ public class AuthorizationExceptionHandler extends ResponseEntityExceptionHandle
 
     @ExceptionHandler(InvalidPasswordException.class)
     public ResponseEntity<Object> handleBadCredentialsException(InvalidPasswordException e){
+        LinkedHashMap<Object, Object> body = _fillErrorMessages(e.getMessage());
+        return new ResponseEntity<>(body, HttpStatus.valueOf(401));
+    }
+
+    @ExceptionHandler(EmailNotFoundException.class)
+    public ResponseEntity<Object> handleBadCredentialsException(EmailNotFoundException e){
         LinkedHashMap<Object, Object> body = _fillErrorMessages(e.getMessage());
         return new ResponseEntity<>(body, HttpStatus.valueOf(401));
     }

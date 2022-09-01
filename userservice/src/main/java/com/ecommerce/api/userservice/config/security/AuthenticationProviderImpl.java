@@ -1,5 +1,6 @@
 package com.ecommerce.api.userservice.config.security;
 
+import com.ecommerce.api.userservice.exceptions.EmailNotFoundException;
 import com.ecommerce.api.userservice.exceptions.InvalidPasswordException;
 import com.ecommerce.api.userservice.models.UserModel;
 import com.ecommerce.api.userservice.repositories.UserRepository;
@@ -25,12 +26,12 @@ public class AuthenticationProviderImpl implements AuthenticationProvider {
     private PasswordEncoder passwordEncoder;
 
     @Override
-    public Authentication authenticate(Authentication authentication) throws AuthenticationException {
+    public Authentication authenticate(Authentication authentication) throws EmailNotFoundException, InvalidPasswordException {
 
         UserModel userModel = userRepository.findByEmail(authentication.getPrincipal().toString())
-                .orElseThrow(() -> new UsernameNotFoundException("User Not Found With Email: " + authentication.getPrincipal().toString()));
+                .orElseThrow(() -> new EmailNotFoundException(authentication.getPrincipal().toString()));
 
-        if(!passwordEncoder.matches(authentication.getPrincipal().toString(), userModel.getPassword())){
+        if(!passwordEncoder.matches(authentication.getCredentials().toString(), userModel.getPassword())){
             throw new InvalidPasswordException();
         }
 

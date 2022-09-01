@@ -31,11 +31,11 @@ public class AuthenticationFilter extends OncePerRequestFilter {
 
         final String token = request.getHeader("Authorization");
 
-        final String email;
+        String email;
 
         if(token != null){
             try {
-                email = jwtTokenUtil.getSubjectFromToken(token);
+                jwtTokenUtil.getSubjectFromToken(token);
             }
             catch (IllegalArgumentException e){
                 System.out.println("Unable to get JWT Token");
@@ -45,9 +45,11 @@ public class AuthenticationFilter extends OncePerRequestFilter {
             }
         }
 
-//        if (email != null && SecurityContextHolder.getContext().getAuthentication() != null){
-//            UserModel userModel = authenticationService.loadUserByUsername()
-//        }
+        if (SecurityContextHolder.getContext().getAuthentication() == null){
+            UserModel userModel = authenticationService.loadUserByEmail(jwtTokenUtil.getSubjectFromToken(token));
+
+            if(jwtTokenUtil.isTokenValid())
+        }
 
         filterChain.doFilter(request, response);
     }

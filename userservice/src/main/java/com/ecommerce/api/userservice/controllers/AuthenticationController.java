@@ -9,12 +9,17 @@ import com.ecommerce.api.userservice.services.UserService;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PostAuthorize;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContext;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.web.server.authorization.AuthorizationContext;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
@@ -25,14 +30,14 @@ import java.util.HashMap;
 @RequestMapping("/auth")
 public class AuthenticationController {
 
-    private final AuthenticationService userDetailsService;
+    private final AuthenticationService authenticationService;
     private final AuthenticationManager authenticationManager;
     private final UserService userService;
     private final JwtTokenUtil jwtTokenUtil;
 
     @Autowired
-    public AuthenticationController(AuthenticationService userDetailsService, AuthenticationManager authenticationManager, UserService userService, JwtTokenUtil jwtTokenUtil) {
-        this.userDetailsService = userDetailsService;
+    public AuthenticationController(AuthenticationService authenticationService, AuthenticationManager authenticationManager, UserService userService, JwtTokenUtil jwtTokenUtil) {
+        this.authenticationService = authenticationService;
         this.authenticationManager = authenticationManager;
         this.userService = userService;
         this.jwtTokenUtil = jwtTokenUtil;
@@ -45,7 +50,7 @@ public class AuthenticationController {
         return ResponseEntity.status(201).body(userService.save(userModel));
     }
 
-    @PostMapping("/signin")
+    @PostMapping(value = "/signin", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<Object> findUser(@RequestBody @Valid UserDto userDto) {
 
         UserModel userModel = new UserModel();
@@ -54,15 +59,13 @@ public class AuthenticationController {
         // if not authorized will throw exception and stop here
         authenticationManager.authenticate(new EmailPasswordAuthenticationToken(userModel.getEmail(), userModel.getPassword(), Boolean.FALSE));
 
-        UserDetails userDetails = userDetailsService.loadUserByUsername(userDto.getEmail());
-
-        String jwtToken = jwtTokenUtil.generateToken(new HashMap<>(), userDetails.getUsername());
+        String jwtToken = jwtTokenUtil.generateToken(new HashMap<>(), userModel.getEmail());
 
         HttpHeaders headers = new HttpHeaders();
         headers.add("Authorization", jwtToken);
 
         return ResponseEntity.ok()
                 .headers(headers)
-                .body(jwtToken);
+                .body("");
     }
 }

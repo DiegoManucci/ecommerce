@@ -1,9 +1,11 @@
 package com.ecommerce.api.userservice.services;
 
+import com.ecommerce.api.userservice.exceptions.EmailNotFoundException;
 import com.ecommerce.api.userservice.models.UserModel;
 import com.ecommerce.api.userservice.repositories.UserRepository;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.AuthenticationProvider;
+import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -22,19 +24,19 @@ public class AuthenticationService implements UserDetailsService { // Spring Sec
 
     @Override
     @Transactional
-    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException { // loadUserByEmail
-        String email = username;
+    public UserDetails loadUserByUsername(String email) throws EmailNotFoundException { // loadUserByEmail // Spring forces you to use this method // using email instead of username
         UserModel userModel = userRepository.findByEmail(email)
-                .orElseThrow(() -> new UsernameNotFoundException("User Not Found With Email: " + email)); // create EmailNotFoundException ?
+                .orElseThrow(() -> new EmailNotFoundException(email));
 
         return new UserModel(userModel.getEmail(), userModel.getUsername(), userModel.getPassword(), userModel.getRoles(), true, true, true, true);
     }
 
     @Transactional
-    public UserModel loadUserByEmail(String email) throws UsernameNotFoundException { // loadUserByEmail
+    public UserModel loadUserByEmail(String email) throws EmailNotFoundException {
         UserModel userModel = userRepository.findByEmail(email)
-                .orElseThrow(() -> new UsernameNotFoundException("User Not Found With Email: " + email)); // create EmailNotFoundException ?
+                .orElseThrow(() -> new EmailNotFoundException(email));
 
         return new UserModel(userModel.getEmail(), userModel.getUsername(), userModel.getPassword(), userModel.getRoles(), true, true, true, true);
     }
+
 }
