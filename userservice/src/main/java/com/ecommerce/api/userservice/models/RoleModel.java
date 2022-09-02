@@ -16,27 +16,25 @@ public class RoleModel implements Serializable, GrantedAuthority {
     @Column(name = "role_id")
     private UUID roleId;
 
-    @Column(name = "role_name", nullable = false, unique = true)
-    private String roleName;
+    @Column(name = "description", nullable = false, unique = true)
+    private String description;
 
     public UUID getRoleId() {
         return roleId;
     }
-
     public void setRoleId(UUID roleId) {
         this.roleId = roleId;
     }
 
-    public String getRoleName() {
-        return roleName;
+    public String getDescription() {
+        return description;
     }
-
-    public void setRoleName(String roleName) {
-        this.roleName = roleName;
+    public void setDescription(String description) {
+        this.description = description;
     }
 
     @Override
     public String getAuthority() {
-        return this.roleName;
+        return description;
     }
 }
