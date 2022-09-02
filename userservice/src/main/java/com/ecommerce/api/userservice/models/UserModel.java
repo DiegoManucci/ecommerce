@@ -31,7 +31,7 @@ public class UserModel implements Serializable, UserDetails { // UserDetails -> 
     @Column(name = "full_name", nullable = false)
     private String fullName;
 
-    @Column(name = "password", nullable = false)
+    @Column(name = "user_password", nullable = false)
     private String password;
 
     @Column(name = "cpf", nullable = false)
@@ -41,11 +41,9 @@ public class UserModel implements Serializable, UserDetails { // UserDetails -> 
     private String rg;
 
     @ManyToOne
-    @JoinTable(
-            name = "TB_USER_SEX",
-            joinColumns = @JoinColumn(name = "user_id"),
-            inverseJoinColumns = @JoinColumn(name = "sex_id"))
-    @Column(nullable = false)
+    @JoinColumn(
+            name = "sex_id",
+            referencedColumnName = "sex_id")
     private SexModel sex;
 
     @Column(name = "birth_date", nullable = false)
@@ -56,7 +54,6 @@ public class UserModel implements Serializable, UserDetails { // UserDetails -> 
             name = "TB_USER_ADDRESS",
             joinColumns = @JoinColumn(name = "user_id"),
             inverseJoinColumns = @JoinColumn(name = "address_id"))
-    @Column(nullable = false)
     private List<AddressModel> addresses;
 
     @ManyToMany

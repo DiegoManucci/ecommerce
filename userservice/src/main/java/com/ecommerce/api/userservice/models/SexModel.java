@@ -18,7 +18,11 @@ public class SexModel implements Serializable {
     @Column(name = "description", nullable = false)
     private String description;
 
+    public SexModel() {
+
+    }
     public SexModel(String description) {
         this.description = description;
     }
+
 }
