@@ -56,7 +56,7 @@ public class AuthenticationController {
         UserModel userModel = new UserModel();
         BeanUtils.copyProperties(userDto, userModel);
 
-        // if not authorized will throw exception and stop here
+        // if not authenticated will throw exception and stop here
         authenticationManager.authenticate(new EmailPasswordAuthenticationToken(userModel.getEmail(), userModel.getPassword(), Boolean.FALSE));
 
         String jwtToken = jwtTokenUtil.generateToken(new HashMap<>(), userModel.getEmail());

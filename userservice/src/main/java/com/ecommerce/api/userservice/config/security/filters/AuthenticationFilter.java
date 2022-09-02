@@ -1,5 +1,6 @@
-package com.ecommerce.api.userservice.config.security;
+package com.ecommerce.api.userservice.config.security.filters;
 
+import com.ecommerce.api.userservice.config.security.EmailPasswordAuthenticationToken;
 import com.ecommerce.api.userservice.config.security.utils.JwtTokenUtil;
 import com.ecommerce.api.userservice.models.UserModel;
 import com.ecommerce.api.userservice.services.AuthenticationService;
@@ -13,6 +14,10 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
 
 @Component
 public class AuthenticationFilter extends OncePerRequestFilter {
@@ -31,11 +36,11 @@ public class AuthenticationFilter extends OncePerRequestFilter {
 
         final String token = request.getHeader("Authorization");
 
-        String email;
+        String email = null;
 
         if(token != null){
             try {
-                jwtTokenUtil.getSubjectFromToken(token);
+                email = jwtTokenUtil.getSubjectFromToken(token);
             }
             catch (IllegalArgumentException e){
                 System.out.println("Unable to get JWT Token");
@@ -45,10 +50,20 @@ public class AuthenticationFilter extends OncePerRequestFilter {
             }
         }
 
-        if (SecurityContextHolder.getContext().getAuthentication() == null){
+        System.out.println(SecurityContextHolder.getContext().getAuthentication());
+
+        if (email != null && SecurityContextHolder.getContext().getAuthentication() == null){
             UserModel userModel = authenticationService.loadUserByEmail(jwtTokenUtil.getSubjectFromToken(token));
 
-            if(jwtTokenUtil.isTokenValid())
+            if(jwtTokenUtil.isTokenValid(token, userModel)){
+
+                // Refresh the token when already authenticated
+                String newJwtToken = jwtTokenUtil.generateToken(new HashMap<>(), userModel.getEmail());
+                response.setHeader("Authorization", newJwtToken);
+
+                EmailPasswordAuthenticationToken authenticationToken = new EmailPasswordAuthenticationToken(userModel.getEmail(), userModel.getPassword(), Boolean.TRUE);
+                SecurityContextHolder.getContext().setAuthentication(authenticationToken);
+            }
         }
 
         filterChain.doFilter(request, response);

@@ -33,28 +33,26 @@ public class JwtTokenUtil {
 
     // Will return the email from the token
     public String getSubjectFromToken(String token){
-        return getClaimFromToken(token, Claims::getSubject);
+        return _getClaimFromToken(token, Claims::getSubject);
     }
 
     public Date getExpireDateFromToken(String token){
-        return getClaimFromToken(token, Claims::getExpiration);
+        return _getClaimFromToken(token, Claims::getExpiration);
     }
 
     public Boolean isTokenExpired(String token){
-        return getExpireDateFromToken(token).after(new Date());
+        return getExpireDateFromToken(token).before(new Date());
     }
 
     public Boolean isTokenValid(String token, UserModel userModel){
-        if(isTokenExpired(token) || !getSubjectFromToken(token).equals(userModel.getEmail()))
-            return false;
-        return true;
+        return !isTokenExpired(token) && getSubjectFromToken(token).equals(userModel.getEmail());
     }
 
-    public <T> T getClaimFromToken(String token, Function<Claims, T> claimsTFunction){
-        return claimsTFunction.apply(getAllClaimsFromToken(token));
+    private  <T> T _getClaimFromToken(String token, Function<Claims, T> claimsTFunction){
+        return claimsTFunction.apply(_getAllClaimsFromToken(token));
     }
 
-    private Claims getAllClaimsFromToken(String token){
+    private Claims _getAllClaimsFromToken(String token){
         return Jwts.parser().setSigningKey(secret).parseClaimsJws(token).getBody();
     }
 
