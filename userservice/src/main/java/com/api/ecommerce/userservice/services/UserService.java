@@ -1,0 +1,22 @@
+package com.api.ecommerce.userservice.services;
+
+import com.api.ecommerce.userservice.models.UserModel;
+import com.api.ecommerce.userservice.repositories.UserRepository;
+import org.springframework.stereotype.Service;
+
+import javax.transaction.Transactional;
+
+@Service
+public class UserService {
+
+    private final UserRepository userRepository;
+
+    public UserService(UserRepository userRepository){
+        this.userRepository = userRepository;
+    }
+
+    @Transactional
+    public UserModel save(UserModel userModel){
+        return userRepository.save(userModel);
+    }
+}
