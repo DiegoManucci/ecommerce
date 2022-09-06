@@ -21,29 +21,25 @@ import java.util.HashMap;
 @CrossOrigin(origins = "*")
 @RequestMapping("/auth")
 public class AuthenticationController {
-
-    private final AuthenticationService authenticationService;
     private final AuthenticationManager authenticationManager;
     private final UserService userService;
     private final JwtTokenUtil jwtTokenUtil;
 
-    @Autowired
-    public AuthenticationController(AuthenticationService authenticationService, AuthenticationManager authenticationManager, UserService userService, JwtTokenUtil jwtTokenUtil) {
-        this.authenticationService = authenticationService;
+    public AuthenticationController(AuthenticationManager authenticationManager, UserService userService, JwtTokenUtil jwtTokenUtil) {
         this.authenticationManager = authenticationManager;
         this.userService = userService;
         this.jwtTokenUtil = jwtTokenUtil;
     }
 
-    @PostMapping("/signup")
-    public ResponseEntity<Object> saveUser(@RequestBody @Valid UserDto userDto) { // @Valid -> valida anotacoes do UserDto
+    @PostMapping(value = "/signup", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<Object> signup(@RequestBody @Valid UserDto userDto) { // @Valid -> validate annotations from UserDto
         UserModel userModel = new UserModel();
         BeanUtils.copyProperties(userDto, userModel);
         return ResponseEntity.status(201).body(userService.save(userModel));
     }
 
     @PostMapping(value = "/signin", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<Object> findUser(@RequestBody @Valid UserDto userDto) {
+    public ResponseEntity<Object> signin(@RequestBody @Valid UserDto userDto) {
 
         UserModel userModel = new UserModel();
         BeanUtils.copyProperties(userDto, userModel);

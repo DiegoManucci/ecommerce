@@ -49,7 +49,7 @@ public class UserModel implements Serializable, UserDetails { // UserDetails -> 
     @Column(name = "birth_date", nullable = false)
     private Date birthDate;
 
-    @OneToMany(mappedBy = "addresses")
+    @OneToMany(mappedBy = "userModel")
     private List<AddressModel> addresses;
 
     @ManyToMany

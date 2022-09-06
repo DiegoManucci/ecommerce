@@ -1,5 +1,7 @@
 package com.api.ecommerce.userservice.models;
 
+import com.api.ecommerce.userservice.constraints.CepConstraint;
+
 import javax.persistence.*;
 import java.io.Serializable;
 import java.util.UUID;
@@ -20,7 +22,7 @@ public class AddressModel implements Serializable {
                 referencedColumnName = "user_id")
     private UserModel userModel;
 
-
+    @CepConstraint
     @Column(name = "postcode", nullable = false, length = 9)
     private String postcode;
 

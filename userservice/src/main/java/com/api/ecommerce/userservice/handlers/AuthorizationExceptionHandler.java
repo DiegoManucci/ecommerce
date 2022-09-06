@@ -28,13 +28,13 @@ public class AuthorizationExceptionHandler extends ResponseEntityExceptionHandle
     }
 
     @ExceptionHandler(DisabledException.class)
-    public ResponseEntity<Object> handleaccountDisabledException(DisabledException e){
+    public ResponseEntity<Object> handleAccountDisabledException(DisabledException e){
         LinkedHashMap<Object, Object> body = _fillErrorMessages(e.getMessage());
         return new ResponseEntity<>(body, HttpStatus.valueOf(401));
     }
 
     @ExceptionHandler(LockedException.class)
-    public ResponseEntity<Object> handleaccountLockedException(LockedException e){
+    public ResponseEntity<Object> handleAccountLockedException(LockedException e){
         LinkedHashMap<Object, Object> body = _fillErrorMessages(e.getMessage());
         return new ResponseEntity<>(body, HttpStatus.valueOf(401));
     }
