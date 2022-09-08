@@ -1,7 +1,9 @@
 package com.api.ecommerce.userservice.controllers;
 
+import com.api.ecommerce.userservice.dtos.UserDto;
 import com.api.ecommerce.userservice.models.UserModel;
 import com.api.ecommerce.userservice.services.UserService;
+import org.springframework.beans.BeanUtils;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -21,19 +23,23 @@ public class UserController implements Serializable {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Object> getUser(@PathVariable(value = "id") UUID user_id){
-        Optional<UserModel> userModel = userService.findById(user_id);
+    public ResponseEntity<Object> getUser(@PathVariable(value = "id") UUID userId){
+        UserModel userModel = userService.findById(userId).get();
         return ResponseEntity.status(200).body(userModel);
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Object> updateUser(@PathVariable(value = "id") UUID user_id){
-
+    public ResponseEntity<Object> updateUser(@PathVariable(value = "id") UUID userId, @RequestBody UserDto userDto){
+        UserModel userModel = userService.findById(userId).get();
+        BeanUtils.copyProperties(userDto, userModel);
+        return ResponseEntity.status(201).body(userService.save(userModel));
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Object> updateUser(@RequestBody UUID user_id){
-
+    public ResponseEntity<Object> deleteUser(@PathVariable(value = "id") UUID userId){
+        UserModel userModel = userService.findById(userId).get();
+        userService.delete(userModel);
+        return ResponseEntity.status(200).body("User Deleted!");
     }
 
 }

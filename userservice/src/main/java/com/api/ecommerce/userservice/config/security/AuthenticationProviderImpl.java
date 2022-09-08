@@ -3,7 +3,7 @@ package com.api.ecommerce.userservice.config.security;
 import com.api.ecommerce.userservice.exceptions.EmailNotFoundException;
 import com.api.ecommerce.userservice.exceptions.InvalidPasswordException;
 import com.api.ecommerce.userservice.models.UserModel;
-import com.api.ecommerce.userservice.repositories.UserRepository;
+import com.api.ecommerce.userservice.repositories.AuthenticationRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.core.Authentication;
@@ -14,7 +14,7 @@ import org.springframework.stereotype.Component;
 public class AuthenticationProviderImpl implements AuthenticationProvider {
 
     @Autowired
-    private UserRepository userRepository;
+    private AuthenticationRepository authenticationRepository;
 
     @Autowired
     private PasswordEncoder passwordEncoder;
@@ -22,7 +22,7 @@ public class AuthenticationProviderImpl implements AuthenticationProvider {
     @Override
     public Authentication authenticate(Authentication authentication) throws EmailNotFoundException, InvalidPasswordException {
 
-        UserModel userModel = userRepository.findByEmail(authentication.getPrincipal().toString())
+        UserModel userModel = authenticationRepository.findByEmail(authentication.getPrincipal().toString())
                 .orElseThrow(() -> new EmailNotFoundException(authentication.getPrincipal().toString()));
 
         if(!passwordEncoder.matches(authentication.getCredentials().toString(), userModel.getPassword())){
